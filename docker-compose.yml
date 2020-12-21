@@ -1,0 +1,22 @@
+version:  '3'
+
+services:
+  datascience-notebook:
+      build:
+        context: .
+      volumes:
+        - ${LOCAL_WORKING_DIR}:/home/jovyan/work
+        - ${LOCAL_DATASETS}:/home/jovyan/work/datasets
+        - ${LOCAL_MODULES}:/home/jovyan/work/modules
+        - ${LOCAL_SSL_CERTS}:/etc/ssl/notebook
+        - ~/.aws/:/home/jovyan/.aws
+      ports:
+        - ${PORT}:8888
+      restart: on-failure:5
+      container_name: jupyter_notebook
+      command: "start-notebook.sh \
+        --NotebookApp.password=${ACCESS_TOKEN} \
+        --NotebookApp.allow_remote_access=False
+        --NotebookApp.allow_root=False \
+        --NotebookApp.certfile=/etc/ssl/notebook/jupyter.crt \
+        --NotebookApp.keyfile=/etc/ssl/notebook/jupyter.key"
